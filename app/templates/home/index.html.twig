@@ -2,4 +2,11 @@
 
 {% block main %}
     <h1>Your lucky number is {{ number }}</h1>
+    <form method="post">
+        <div class="form-group">
+            <label for="number">Ваш номер</label>
+            <input class="form-control" type="text" name="number" placeholder="Введите ваш счастливый номер">
+            <button type="submit" class="btn btn-primary">Отправить</button>
+        </div>
+    </form>
 {% endblock %}
