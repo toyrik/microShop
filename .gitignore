@@ -1,0 +1,4 @@
+.idea
+/databases/
+/app/log/nginx/*
+!/app/log/nginx/.gitkeep
