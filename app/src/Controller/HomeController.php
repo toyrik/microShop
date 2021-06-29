@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Entity\Item;
 use App\Entity\Tag;
+use App\Repository\ItemRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,9 +22,12 @@ class HomeController extends AbstractController
      */
     public function index(): Response
     {
+        $entityManager = $this->getDoctrine()->getManager();
         $form = $this->getFilterForm();
 
-        $number = random_int(0,100);
+        $itemRepository = $entityManager->getRepository(Item::class);
+        $items = $itemRepository->findAll();
+        dump($items);
         return $this->render('home/index.html.twig',[
             'form' => $form->createView(),
 
@@ -37,7 +41,6 @@ class HomeController extends AbstractController
     public function list(Request $request): Response
     {
         $form = $this->getFilterForm();
-        $number = ($request->request->get('number')) ? $request->request->get('number') : random_int(0,100);
 
         return $this->render('home/index.html.twig',[
             'form' => $form->createView(),
@@ -46,6 +49,14 @@ class HomeController extends AbstractController
 
     protected function getFilterForm()
     {
+        $entityManager = $this->getDoctrine()->getManager();
+        $tagsRepository = $entityManager->getRepository(Tag::class);
+        $tags = $tagsRepository->findAll();
+        $options = [];
+        foreach ($tags as $tag){
+            $options[$tag->getName()] = $tag->getId();
+        }
+
         return $this->createFormBuilder()
             ->add('with', ChoiceType::class, array(
                 'multiple' => true,
@@ -53,14 +64,7 @@ class HomeController extends AbstractController
                 'label' => 'Включить',
                 'required' => false,
                 'label_attr' => ['class' => 'label'],
-                'choices' => array(
-                    'Одежда' => 1,
-                    'Обувь' => 2,
-                    'Стиль' => 3,
-                    'Повседневное' => 4,
-                    'Черное' => 5,
-                    'Белое' => 6,
-                ),
+                'choices' => $options,
             ))
             ->add('without', ChoiceType::class, array(
                 'multiple' => true,
@@ -68,14 +72,7 @@ class HomeController extends AbstractController
                 'label' => 'Исключить',
                 'required' => false,
                 'label_attr' => ['class' => 'label'],
-                'choices' => array(
-                    'Одежда' => 1,
-                    'Обувь' => 2,
-                    'Стиль' => 3,
-                    'Повседневное' => 4,
-                    'Черное' => 5,
-                    'Белое' => 6,
-                ),
+                'choices' => $options,
             ))
             ->add('Filter', SubmitType::class, array(
                 'attr' => ['class' => 'btn btn-primary']
