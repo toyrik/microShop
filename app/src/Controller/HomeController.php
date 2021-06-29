@@ -22,12 +22,8 @@ class HomeController extends AbstractController
      */
     public function index(): Response
     {
-        $entityManager = $this->getDoctrine()->getManager();
         $form = $this->getFilterForm();
 
-        $itemRepository = $entityManager->getRepository(Item::class);
-        $items = $itemRepository->findAll();
-        dump($items);
         return $this->render('home/index.html.twig',[
             'form' => $form->createView(),
 
@@ -40,7 +36,14 @@ class HomeController extends AbstractController
      */
     public function list(Request $request): Response
     {
+        $entityManager = $this->getDoctrine()->getManager();
         $form = $this->getFilterForm();
+        $form->handleRequest($request);
+
+        $parameter = $request->get('form');
+        $itemRepository = $entityManager->getRepository(Item::class);
+        $items = $itemRepository->findAll();
+        dump($parameter);
 
         return $this->render('home/index.html.twig',[
             'form' => $form->createView(),
