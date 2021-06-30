@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Item;
-use App\Entity\Tag;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -24,7 +23,6 @@ class ItemRepository extends ServiceEntityRepository
     {
 
         $db = $this->createQueryBuilder('i')
-            ->select('i.id, i.name')
             ->leftJoin('i.tag','t')
             ->where('0=0');
 
@@ -54,8 +52,8 @@ class ItemRepository extends ServiceEntityRepository
         }
         $db->groupBy('i.id');
 
-        $query = $db->getQuery();
-        return $query->execute();
+        $items = $db->getQuery();
+        return $items->execute();
     }
     // /**
     //  * @return Item[] Returns an array of Item objects

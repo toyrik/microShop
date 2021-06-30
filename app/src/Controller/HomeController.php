@@ -42,6 +42,23 @@ class HomeController extends AbstractController
         $params = $request->get('form');
         $itemRepository = $entityManager->getRepository(Item::class);
         $items = $itemRepository->findByFilter($params);
+        if(!empty($items)) {
+            $rows = [];
+            foreach ($items as $item){
+                $data = array(
+                    $item->getId(),
+                    $item->getName(),
+                );
+                $rows[] = implode(',', $data);
+              // $item->upShowCount($entityManager);
+            }
+
+            $content = implode("\n", $rows);
+            $response = new Response($content);
+            $response->headers->set('Content-Type', 'text/csv');
+
+            return $response;
+        }
         dump($items);
 
         return $this->render('home/index.html.twig',[
