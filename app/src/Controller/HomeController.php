@@ -50,7 +50,9 @@ class HomeController extends AbstractController
                     $item->getName(),
                 );
                 $rows[] = implode(',', $data);
-              // $item->upShowCount($entityManager);
+               $item->setShowCount($item->getShowCount()+1);
+               $entityManager->persist($item);
+               $entityManager->flush();
             }
 
             $content = implode("\n", $rows);
@@ -59,7 +61,6 @@ class HomeController extends AbstractController
 
             return $response;
         }
-        dump($items);
 
         return $this->render('home/index.html.twig',[
             'form' => $form->createView(),
