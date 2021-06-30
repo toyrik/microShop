@@ -5,13 +5,11 @@ namespace App\Controller;
 
 use App\Entity\Item;
 use App\Entity\Tag;
-use App\Repository\ItemRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class HomeController extends AbstractController
@@ -32,6 +30,7 @@ class HomeController extends AbstractController
 
     /**
      * @Route("/", name="posHome" , methods={"post"})
+     * @param Request $request
      * @return Response
      */
     public function list(Request $request): Response
@@ -40,10 +39,10 @@ class HomeController extends AbstractController
         $form = $this->getFilterForm();
         $form->handleRequest($request);
 
-        $parameter = $request->get('form');
+        $params = $request->get('form');
         $itemRepository = $entityManager->getRepository(Item::class);
-        $items = $itemRepository->findAll();
-        dump($parameter);
+        $items = $itemRepository->findByFilter($params);
+        dump($items);
 
         return $this->render('home/index.html.twig',[
             'form' => $form->createView(),
